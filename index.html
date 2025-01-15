@@ -103,29 +103,40 @@
     <div class="background"></div>
 
     <h1 id="h">Motivational quotes by Rohit</h1>
+    <p id="err"></p>
     <button id="btn" onclick="getd()">Get quotes</button>
     <h4 id="hello"></h4>
     <script>
-   let h = document.getElementById('h');
+  let h = document.getElementById('h');
+ 
 
-
-  async function getd() {
-    h.innerText = "Getting Quotes...";
-    let i = Math.floor(Math.random() * 200) + 1; 
-   const url = `http://rohitnode.onrender.com/api/line${i}`
-     await fetch(url)
-        .then(res => {
-        
-            return res.json();
-        })
-        .then(data => {
-            let line = data[`line${i}`];  
-            h.innerText = line; 
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-        });
+function showLoading() {
+    let dots = 0;
+    return setInterval(() => {
+        h.innerText = `Getting Quote${'.'.repeat(dots % 4)}`;
+        dots++;
+    }, 500); 
 }
+
+async function getd() {
+    let loadingInterval = showLoading(); 
+
+    try {
+        let i = Math.floor(Math.random() * 200) + 1; 
+        const url = `http://rohitnode.onrender.com/api/line${i}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        let line = data[`line${i}`];  
+        h.innerText = line; 
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        h.innerText = "Failed to get quote. Try again!";
+     
+    } finally {
+        clearInterval(loadingInterval); 
+    }
+}
+
 
 </script>
 </body>
